@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+	<title>Smart Irrigation System</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<!-- JQuery links  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="style.css">
+    <style>
+        .canvas {
+            background-color: rgb(205, 243, 220);
+        }
+    </style>
+      <script>
+    var count = 0;
+
+function refresh() {
+
+//your stuff to refresh your divs here (ajax requests...)
+
+  $("#block1").html()
+  setTimeout(refresh, 3000);
+}
+
+refresh();
+</script>
+	<head>
+  <body>
+      <div class="container-fluid">
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                       <!-- <a href="base-two.html" class="btn btn-primary">Data-2</a> -->
+                    </div>
+                    <div id="block1" class="container">
+                        <h1 class="display-4 text-center mb-5 mt-4"><strong class="text-success"> Smart Irrigation by <span class="text-secondary">YNH</span> </strong></h1>
+                        <div class="row" id="auto" >
+                            <div class="col-md-12  mb-5">
+                                <h3 class="text-left mb-2"><strong class="text-primary"> Field-2 </strong></h3>
+                                <h3 class="Temp1">Temperature: <strong>{{temp2}}</strong> °C </h3>
+                                <h3 class="Hum1">Humidity: <strong> {{hum2}}</strong> % </h3>
+                                <h3 class="Soilm1">Soil Moisture: <strong> {{soil2}} </strong> % </h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<html>
+
+<!-- Field-1 section -->
+    <div class="container-fluid">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="card-title text-center">
+                    <h3><strong class="text-primary">Field-2</strong></h3>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- <h1 class="text-center">Hello</h1> -->
+                                <canvas class="canvas" id="canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- <h1 class="text-center">Hello</h1> -->
+                                <canvas class="canvas" id="canvas2"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- <h1 class="text-center">Hello</h1> -->
+                                <canvas class="canvas" id="canvas3"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+      <script>
+    $(document).ready( function(){
+$('#auto').load('load.php');
+refresh();
+});
+
+function refresh()
+{
+setTimeout( function() {
+  $('#auto').fadeOut('slow').load('load.php').fadeIn('slow');
+  refresh();
+}, 10000);
+}
+</script>
+    <!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+            <!-- Temp Field 2 -->
+<script>
+    $(document).ready(function () {
+        const config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "Temperature",
+                    backgroundColor: 'rgb(255, 99, 132)',
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: [],
+                    fill: false,
+                }],
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Live Temperature Data'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        const context = document.getElementById('canvas').getContext('2d');
+
+        const lineChart = new Chart(context, config);
+
+        const source = new EventSource("/temp-data-b");
+
+        source.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (config.data.labels.length === 5) {
+                config.data.labels.shift();
+                config.data.datasets[0].data.shift();
+            }
+            config.data.labels.push(data.time);
+            config.data.datasets[0].data.push(data.value);
+            lineChart.update();
+        }
+    });
+</script>
+
+    <!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+            <!--- Hum Field 2 --->
+<script>
+    $(document).ready(function () {
+        const config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "Humidity",
+                    backgroundColor: 'rgb(252, 186, 3)',
+                    borderColor: 'rgb(252, 186, 3)',
+                    data: [],
+                    fill: false,
+                }],
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Live Humidity Data'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        const context = document.getElementById('canvas2').getContext('2d');
+
+        const lineChart = new Chart(context, config);
+
+        const source = new EventSource("/hum-data-b");
+
+        source.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (config.data.labels.length === 5) {
+                config.data.labels.shift();
+                config.data.datasets[0].data.shift();
+            }
+            config.data.labels.push(data.time);
+            config.data.datasets[0].data.push(data.value);
+            lineChart.update();
+        }
+    });
+</script>
+
+
+    <!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--suppress JSUnresolvedLibraryURL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+            <!-- Soil Moisture Field 2 -->
+<script>
+    $(document).ready(function () {
+        const config = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "SoilMoisture",
+                    backgroundColor: 'rgb(0, 255, 0)',
+                    borderColor: 'rgb(0, 255, 0)',
+                    data: [],
+                    fill: false,
+                }],
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Live SoilMoisture Data'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        const context = document.getElementById('canvas3').getContext('2d');
+
+        const lineChart = new Chart(context, config);
+
+        const source = new EventSource("/soil-data-b");
+
+        source.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (config.data.labels.length === 5) {
+                config.data.labels.shift();
+                config.data.datasets[0].data.shift();
+            }
+            config.data.labels.push(data.time);
+            config.data.datasets[0].data.push(data.value);
+            lineChart.update();
+        }
+    });
+</script>
+
+
+
+            <!-- input field -->
+            <div class="card-body">
+                <h1 class="text-center">Prediction of Water Amount</h1>
+                <p class="text-center"> Enter your Environment Variables Values</p>
+    <form action="/" method="POST">
+        <div class="form-group col-md-12 item-center">
+                        <label for="cplife">Select a Crop Type for the Field:</label>
+                        <select id="cplife" class="form-control">
+                            <option value="0" selected>Groun Nut</option>
+                            <option value="1">Tomato</option>
+                            <option value="2">Maize</option>
+                            <option value="4">Potato</option>
+                        </select>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label for="cpday" class="col-sm-3 col-form-label">Crop Day:</label>
+                                <div class="col-sm-9">
+                                    <input name="cpday" type="text" class="form-control" id="cpday" placeholder="Crop Life">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="sm" class="col-sm-3 col-form-label">Soil Moisture:</label>
+                                <div class="col-sm-9">
+                                    <input name="sm" type="text" class="form-control" id="sm" placeholder="Soil Moisture">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="temp" class="col-sm-3 col-form-label">Temperature:</label>
+                                <div class="col-sm-9">
+                                    <input name="temp" type="text" class="form-control" id="temp" placeholder="Temperature">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="humi" class="col-sm-3 col-form-label">Humidity:</label>
+                                <div class="col-sm-9">
+                                    <input name="humi" type="text" class="form-control" id="humi" placeholder="Humidity">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group row">
+                                <label for="tempmax" class="col-sm-3 col-form-label">Max Temp:</label>
+                                <div class="col-sm-9">
+                                    <input name="tempmax" type="text" class="form-control" id="tempmax" placeholder="TemperatureMax">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="tempmin" class="col-sm-3 col-form-label">Min Temp:</label>
+                                <div class="col-sm-9">
+                                    <input name="tempmin" type="text" class="form-control" id="tempmin" placeholder="TemperatureMin">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="evapo" class="col-sm-3 col-form-label">Evapotranspiration</label>
+                                <div class="col-sm-9">
+                                    <input name="evapo" type="text" step="any" class="form-control" id="evapo" placeholder="Evapotranspiration">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="cpfactor" class="col-sm-3 col-form-label">Crop Factor:</label>
+                                <div class="col-sm-9">
+                                    <input name="cpfactor" type="text" step="any" class="form-control" id="cpfactor" placeholder="Crop Factor">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                        <!-- <input type="submit"> -->
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+    </form>
+                <body>
+                <h3 class="text-primary"> Predicted Water Amount = <span class="text-danger"> {{ n }} </span></h3>
+
+                <h3>
+
+</html>
