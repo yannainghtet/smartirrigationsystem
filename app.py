@@ -8,7 +8,6 @@ import os
 import logging
 import machinelearning
 
-from numpy._distributor_init import basedir
 from turbo_flask import Turbo
 import threading
 from datetime import datetime
